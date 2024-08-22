@@ -40,7 +40,23 @@ const checkLoginOptions = async (): Promise<any> => {
   });
 }
 
+const forgotPassword = async(params: any) : Promise<any> => {
+  const authStore = useAuthStore()
+  const baseURL = authStore.getBaseUrl
+
+  return client({
+    url: "/forgotPasswordTest",
+    baseURL,
+    method: "post",
+    data: params,
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+}
+
 export const UserService = {
+  forgotPassword,
   getUserProfile,
   checkLoginOptions,
   login

@@ -39,6 +39,14 @@
                 <ion-icon slot="end" :icon="arrowForwardOutline" />
               </ion-button>
             </div>
+
+            <ion-item class="ion-padding" id="error-message" v-if="error" lines="none">
+              <ion-icon color="danger" :icon="warningOutline" slot="start"/>
+              <ion-label>
+                {{ error }}
+                <p v-if="showForgotPasswordLink" @click="openResetPasswordModal">{{ $t("forgot password") }}</p>
+              </ion-label>
+            </ion-item>
           </section>
         </form>
       </div>
@@ -63,18 +71,21 @@ import {
   IonIcon,
   IonInput,
   IonItem,
+  IonLabel,
   IonPage,
-  loadingController
+  loadingController,
+  modalController
 } from "@ionic/vue";
 import { defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/store/auth";
 import Logo from '@/components/Logo.vue';
-import { arrowForwardOutline, gridOutline } from 'ionicons/icons'
+import { arrowForwardOutline, gridOutline, warningOutline } from 'ionicons/icons'
 import { UserService } from "@/services/UserService";
 import { translate } from "@/i18n";
 import { isMaargLogin, showToast } from "@/util";
 import { hasError } from "@hotwax/oms-api";
+import ResetPasswordModal from "@/components/ResetPasswordModal.vue"
 
 export default defineComponent({
   name: "Login",
@@ -87,6 +98,7 @@ export default defineComponent({
     IonIcon,
     IonInput,
     IonItem,
+    IonLabel,
     IonPage,
     Logo
   },
@@ -102,10 +114,14 @@ export default defineComponent({
       hideBackground: true,
       isConfirmingForActiveSession: false,
       loader: null as any,
-      loginOption: {} as any
+      loginOption: {} as any,
+      error: '',
+      showForgotPasswordLink: false
     };
   },
   ionViewWillEnter() {
+    this.error = ""
+    this.showForgotPasswordLink = false
     this.initialise()
   },
   methods: {
@@ -252,7 +268,9 @@ export default defineComponent({
           this.password = ''
           this.router.push('/')
         }
-      } catch (error) {
+      } catch (error: any) {
+        this.error = error.errorMessage || "Something went wrong, please contact support."
+        this.showForgotPasswordLink = this.error.includes("remaining")
         console.error(error)
       }
     },
@@ -304,6 +322,15 @@ export default defineComponent({
 
       omsUrl = omsUrl ? omsUrl : this.authStore.oms.startsWith('http') ? this.authStore.oms.includes('/api') ? this.authStore.oms : `${this.authStore.oms}/api/` : this.authStore.oms
       window.location.href = `${this.authStore.getRedirectUrl}?oms=${omsUrl}&token=${this.authStore.token.value}&expirationTime=${this.authStore.token.expiration}${isMaargLogin(this.authStore.getRedirectUrl) ? '&omsRedirectionUrl=' + this.authStore.oms : ''}`
+    },
+    async openResetPasswordModal() {
+      const resetPasswordModal = await modalController.create({
+        component: ResetPasswordModal,
+        showBackdrop: false,
+        componentProps: { username: this.username }
+      });
+
+      await resetPasswordModal.present();
     }
   },
   setup () {
@@ -313,7 +340,8 @@ export default defineComponent({
       arrowForwardOutline,
       authStore,
       gridOutline,
-      router
+      router,
+      warningOutline
     };
   }
 });
@@ -328,6 +356,11 @@ export default defineComponent({
   justify-content: center;
   align-items: center;
   height: 100%;
+}
+
+#error-message {
+  --background: #ED576B1A;
+  --border-radius: 8px;
 }
 
 </style>
