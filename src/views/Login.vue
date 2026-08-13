@@ -74,10 +74,10 @@ import {
 import { arrowForwardOutline, gridOutline } from "ionicons/icons"
 import { ref } from "vue";
 import Logo from "@/components/Logo.vue"
-import { useAuth } from "@/composables/auth"
-import { useUserStore } from "@/store/user"
+import { useAuth } from "@common"
 import { appInfo, isMaargLogin, isOmsWithMaarg, showToast } from "@/util"
 import router from "../router"
+import { useUserStore } from "@/store/user";
 
 const route = router.currentRoute.value;
 const userStore = useUserStore();
@@ -144,7 +144,7 @@ async function initialise() {
   }
 
   // show OMS input if SAML if configured or query or state does not have OMS
-  if(loginOption.value.loginAuthType !== "BASIC" || route.query?.oms || !cookieHelper().get("OMS")) {
+  if(loginOption.value.loginAuthType !== "BASIC" || route.query?.oms || !cookieHelper().get("oms")) {
     showOmsInput.value = true
   }
 
@@ -169,7 +169,10 @@ async function initialise() {
   }
 
   if(cookieHelper().get("oms") && cookieHelper().get("token") && cookieHelper().get("userId") && cookieHelper().get("expirationTime")) {
-    login({ token: cookieHelper().get("token"), expirationTime: cookieHelper().get("expirationTime") })
+    useUserStore().oms = cookieHelper().get("oms") as string
+    await login({ token: cookieHelper().get("token"), expirationTime: cookieHelper().get("expirationTime") })
+    dismissLoader();
+    return;
   }
 
   instanceUrl.value = commonUtil.getOMSInstanceName();

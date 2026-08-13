@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import { commonUtil, cookieHelper, translate } from "@common";
+import { commonUtil, cookieHelper, translate, useAuth } from "@common";
 import {
   IonContent,
   IonIcon,
@@ -29,7 +29,6 @@ import {
   popoverController,
 } from "@ionic/vue";
 import { exitOutline, personCircleOutline } from "ionicons/icons";
-import { useAuth } from "@/composables/auth";
 import { useUserStore } from "@/store/user";
 
 const userStore = useUserStore()

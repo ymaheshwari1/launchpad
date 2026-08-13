@@ -21,6 +21,7 @@ export default defineConfig({
     legacy()
   ],
   resolve: {
+    dedupe: ['vue', 'vue-router', '@ionic/vue', '@ionic/vue-router', 'pinia', 'vue-i18n'],
     alias: {
       "@": path.resolve(__dirname, "./src"),
       "@common": path.resolve(__dirname, "../../common")

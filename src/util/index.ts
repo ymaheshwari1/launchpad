@@ -41,8 +41,13 @@ const appInfo = [{
   resource: preorderIcon,
   type: "Orders"
 }, {
-  handle: "atp",
-  name: "Available to Promise",
+  handle: "products",
+  name: "Products",
+  resource: atpIcon,
+  type: "Workflow"
+}, {
+  handle: "order-manager",
+  name: "Order Manager",
   resource: atpIcon,
   type: "Workflow"
 }, {

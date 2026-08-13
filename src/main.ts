@@ -1,4 +1,4 @@
-import { createDxpI18n } from "@common"
+import { createDxpI18n, initialiseConfig } from "@common"
 import { IonicVue } from "@ionic/vue";
 
 import { createPinia } from "pinia";
@@ -30,6 +30,7 @@ import "@ionic/vue/css/display.css";
 import "@common/css/settings.css";
 import "@common/css/theme.css";
 import "./theme/variables.css";
+import { useUserStore } from "./store/user";
 
 navigator.serviceWorker.register("no-op-service-worker.js")
 
@@ -43,8 +44,18 @@ const app = createApp(App)
     innerHTMLTemplatesEnabled: true
   })
   .use(pinia)
-  .use(router)
+  .use(router as any)
   .use(i18n);
+
+initialiseConfig({
+  postLogin: useUserStore().postLogin,
+  postLogout: useUserStore().postLogout,
+  get oms() { return useUserStore().oms },
+  set oms(val) { useUserStore().oms = val },
+  get current() { return useUserStore().current },
+  set current(val) { useUserStore().current = val },
+  router: router
+})
 
 router.isReady().then(() => {
   app.mount("#app");

@@ -63,7 +63,7 @@
 </template>
 
 <script setup lang="ts">
-import { commonUtil, cookieHelper, translate } from "@common"
+import { commonUtil, cookieHelper, translate, useAuth } from "@common"
 import {
   IonAvatar,
   IonButton,
@@ -91,7 +91,6 @@ import {
 } from "ionicons/icons";
 import Image from "@/components/Image.vue";
 import UserActionsPopover from "@/components/UserActionsPopover.vue"
-import { useAuth } from "@/composables/auth";
 import { useUserStore } from "@/store/user";
 import { appInfo, isMaargLogin } from "@/util";
 import router from "../router";
